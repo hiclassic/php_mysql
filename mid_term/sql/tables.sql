@@ -1,0 +1,18 @@
+CREATE DATABASE IF NOT EXISTS mydb;
+USE mydb;
+
+CREATE TABLE IF NOT EXISTS Manufacturer (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  address VARCHAR(100),
+  contact_no VARCHAR(50)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS Product (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  price INT(5) NOT NULL,
+  manufacturer_id INT,
+  FOREIGN KEY (manufacturer_id) REFERENCES Manufacturer(id)
+  ON DELETE CASCADE
+) ENGINE=InnoDB;
