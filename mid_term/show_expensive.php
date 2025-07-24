@@ -2,8 +2,25 @@
 $pdo = new PDO("mysql:host=localhost;dbname=exm_db", 'root', '2997');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Expensive View Load
 $sql = "SELECT * FROM ExpensiveProducts";
 $stmt = $pdo->query($sql);
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Delete Manufacturer if id passed
+if (isset($_GET['delete_manufacturer_id'])) {
+  $mid = $_GET['delete_manufacturer_id'];
+
+  // Delete manufacturer
+  $delStmt = $pdo->prepare("DELETE FROM Manufacturer WHERE id = :mid");
+  $delStmt->bindParam(':mid', $mid);
+  $delStmt->execute();
+
+  echo "<div class='alert alert-danger'>Manufacturer ID $mid Deleted! Related products removed by trigger.</div>";
+  // Reload data
+  $stmt = $pdo->query($sql);
+  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,21 +36,32 @@ $stmt = $pdo->query($sql);
   <?php include '../navbar.php'; ?>
 
   <h2>Expensive Products (Price > 5000)</h2>
+
   <table class="table table-bordered">
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Price</th>
-      <th>Manufacturer ID</th>
-    </tr>
-    <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) : ?>
-    <tr>
-      <td><?= htmlspecialchars($row['id']) ?></td>
-      <td><?= htmlspecialchars($row['name']) ?></td>
-      <td><?= htmlspecialchars($row['price']) ?></td>
-      <td><?= htmlspecialchars($row['manufacturer_id']) ?></td>
-    </tr>
-    <?php endwhile; ?>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Manufacturer ID</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($products as $p): ?>
+      <tr>
+        <td><?= $p['id'] ?></td>
+        <td><?= htmlspecialchars($p['name']) ?></td>
+        <td><?= $p['price'] ?></td>
+        <td><?= $p['manufacturer_id'] ?></td>
+        <td>
+          <a href="show_expensive.php?delete_manufacturer_id=<?= $p['manufacturer_id'] ?>" 
+             onclick="return confirm('Are you sure you want to delete this Manufacturer? All linked products will be deleted!')"
+             class="btn btn-danger btn-sm">Delete Manufacturer</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
   </table>
 
 </body>
