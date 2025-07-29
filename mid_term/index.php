@@ -18,7 +18,7 @@ $manufacturers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="container mt-4">
 
   <!-- Navbar -->
-  <?php include '../navbar.php'; ?>
+  <?php include 'navbar.php'; ?>
 
   <!-- ✅ Manufacturer Insert Form -->
   <h2>Add Manufacturer</h2>

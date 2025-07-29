@@ -13,7 +13,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 <body class="container mt-4">
 
   <!-- Navbar -->
-  <?php include '../navbar.php'; ?>
+  <?php include 'navbar.php'; ?>
 
   <?php
   if (isset($_POST['submit_manufacturer'])) {

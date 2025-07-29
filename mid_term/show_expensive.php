@@ -33,7 +33,7 @@ if (isset($_GET['delete_manufacturer_id'])) {
 <body class="container mt-4">
 
   <!-- Navbar -->
-  <?php include '../navbar.php'; ?>
+  <?php include 'navbar.php'; ?>
 
   <h2>Expensive Products (Price > 5000)</h2>
 

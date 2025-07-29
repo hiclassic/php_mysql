@@ -1,6 +1,6 @@
 -- ✅ 1️⃣ Database তৈরি
-CREATE DATABASE IF NOT EXISTS exm_db;
-USE exm_db;
+CREATE DATABASE IF NOT EXISTS db_driven_webapp;
+USE db_driven_webapp;
 
 -- ✅ 2️⃣ Manufacturer টেবিল তৈরি
 CREATE TABLE IF NOT EXISTS Manufacturer (
