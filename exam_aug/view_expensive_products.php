@@ -1,9 +1,8 @@
 <?php
 include 'config.php';
+include 'navbar.php';
 
-// Fetch from expensive_products view
-$sql = "SELECT id, name, price, manufacturer_id, manufacturer_name FROM expensive_products";
-$result = $conn->query($sql);
+$result = $conn->query("CALL get_expensive_products()");
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +15,7 @@ $result = $conn->query($sql);
 <div class="container">
     <h2>Expensive Products (Price &gt; 5000)</h2>
 
-    <?php if ($result->num_rows > 0): ?>
+    <?php if ($result && $result->num_rows > 0): ?>
     <table class="table table-bordered">
         <thead>
             <tr><th>ID</th><th>Name</th><th>Price</th><th>Manufacturer</th></tr>
@@ -35,6 +34,13 @@ $result = $conn->query($sql);
     <?php else: ?>
     <div class="alert alert-info">No expensive products found.</div>
     <?php endif; ?>
+
+    <?php
+    if ($result) {
+        $result->close();
+        $conn->next_result();
+    }
+    ?>
 </div>
 </body>
 </html>

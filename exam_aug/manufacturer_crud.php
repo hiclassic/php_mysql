@@ -1,7 +1,8 @@
 <?php
 include 'config.php';
+include 'navbar.php';
 
-// Handle Insert via SP
+// Insert manufacturer
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $address = $_POST['address'];
@@ -11,29 +12,18 @@ if (isset($_POST['submit'])) {
     $stmt->bind_param("sss", $name, $address, $contact);
     $stmt->execute();
     $stmt->close();
+    $conn->next_result();
     $msg = "✅ Manufacturer Added!";
 }
 
-// Handle Delete via SP
-if (isset($_POST['delete_manufacturer_id'])) {
-    $mid = intval($_POST['delete_manufacturer_id']);
-    $stmt = $conn->prepare("CALL delete_manufacturer_by_id(?)");
-    $stmt->bind_param("i", $mid);
-    $stmt->execute();
-    $stmt->close();
-
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
-}
-
-// Fetch all manufacturers (direct select is okay)
-$result = $conn->query("SELECT * FROM manufacturer");
+// Fetch manufacturers
+$result = $conn->query("CALL get_all_manufacturers()");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manufacturer CRUD</title>
+    <title>Manufacturer Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body class="p-5">
@@ -63,9 +53,9 @@ $result = $conn->query("SELECT * FROM manufacturer");
         </div>
 
         <div class="col-md-7">
-            <h4>Manufacturers List</h4>
+            <h4>Manufacturer List</h4>
             <table class="table table-bordered">
-                <thead><tr><th>ID</th><th>Name</th><th>Address</th><th>Contact</th><th>Delete</th></tr></thead>
+                <thead><tr><th>ID</th><th>Name</th><th>Address</th><th>Contact</th></tr></thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
@@ -73,18 +63,17 @@ $result = $conn->query("SELECT * FROM manufacturer");
                         <td><?= htmlspecialchars($row['name']) ?></td>
                         <td><?= htmlspecialchars($row['address']) ?></td>
                         <td><?= htmlspecialchars($row['contact_no']) ?></td>
-                        <td>
-                            <form method="POST" onsubmit="return confirm('Delete manufacturer and all related products?');">
-                                <input type="hidden" name="delete_manufacturer_id" value="<?= $row['id'] ?>" />
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
+            <?php
+            $result->close();
+            $conn->next_result();
+            ?>
         </div>
     </div>
 </div>
 </body>
 </html>
+
